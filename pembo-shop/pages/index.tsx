@@ -7,8 +7,8 @@ const Home = ({ products, bannerData }: any) => {
   return (
     <>
       <HeroBanner heroBanner={bannerData.length && bannerData[0]} />
-      {console.log({ bannerData })}
-      {console.log({ products })}
+      {/* {console.log({ bannerData })}
+      {console.log({ products })} */}
       <div className='products-heading'>
         <h2>Beset Selling Products</h2>
         <p>Speakers of many variations</p>
@@ -19,7 +19,7 @@ const Home = ({ products, bannerData }: any) => {
           <Product key={product._id} product={product} />
         )}
       </div>
-      <FooterBanner />
+      <FooterBanner footerBanner={bannerData && bannerData[0]} />
     </>
   )
 }
