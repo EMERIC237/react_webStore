@@ -3,14 +3,16 @@ import { client, urlFor } from '../../lib/client'
 import { GetStaticPaths } from 'next'
 
 const ProductDetails = ({ product, products }: any) => {
-    const { image, name, details, price } = product;
-    console.log("this is image here: ", image)
+    const { Image, name, details, price } = product;
+    console.log("this is product here: ", product)
+    console.log("this is image here: ", Image)
+
     return (
         <div>
             <div className="product-detail-container">
                 <div>
                     <div className="image-container">
-                    <img src={urlFor(image)}  alt="headphones" />
+                    <img src={urlFor(product.Image && Image[0])}  alt="headphones" />
                     </div>
                 </div>
             </div>
