@@ -12,7 +12,6 @@ const Cart = () => {
     return null;
   }
   const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity, onRemove } = context
-  console.log({ cartItems })
   return (
     <div className='cart-wrapper' ref={cartRef}>
       <div className="cart-container">
@@ -66,7 +65,7 @@ const Cart = () => {
           <div className="cart-bottom">
             <div className="total">
               <h3>Subtotal</h3>
-              <h3>XAF{totalPrice}</h3>
+              <h3>XAF {totalPrice}</h3>
             </div>
             <div className="btn-container">
               <button type='button' className="btn" >Pay Here</button>

@@ -14,7 +14,7 @@ const Product = ({ product: { Image, name, slug, price } }: any) => {
             height={250}
             className="product-image" />
           <p className="product-name">{name}</p>
-          <p className="product-price">${price}</p>
+          <p className="product-price">XAF {price}</p>
         </div>
       </Link>
     </div>

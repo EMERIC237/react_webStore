@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { idText } from "typescript";
+import { createTypeReferenceDirectiveResolutionCache, idText } from "typescript";
 interface AppContextInterface {
   showCart: boolean;
   cartItems: any[] | undefined;
@@ -28,16 +28,21 @@ export const StateContext = ({ children }: any) => {
   let index;
 
   const onAddItems = (product: any, quantity: number) => {
-    const checkProductInCart = cartItems.find((item: any) => item._id === product._id)
+    const checkProductInCart = cartItems.some((item: any) => item._id === product._id)
     //if the product exist in the cart...
     setTotalPrice((prevTotalPrice: number) => prevTotalPrice + product.price * quantity)
     setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + quantity)
 
     if (checkProductInCart) {
       const updatedCartItems = cartItems.map((cartProduct: any) => {
-        if (cartProduct._id === product._id) return {
-          ...cartProduct,
-          quantity: cartProduct.quantity + quantity
+
+        if (cartProduct._id === product._id) {
+          return {
+            ...cartProduct,
+            quantity: cartProduct.quantity + quantity
+          }
+        } else {
+          return cartProduct
         }
       })
       setCartItems(updatedCartItems)
