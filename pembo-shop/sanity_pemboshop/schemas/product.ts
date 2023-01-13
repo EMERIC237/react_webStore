@@ -1,12 +1,12 @@
 export default {
   name: 'product',
   type: 'document',
-  title: 'product',
+  title: 'Product',
   // here we define the characteristic of the different fields
   fields: [
     {
-      name: 'Image',
-      title: 'Image',
+      name: 'images',
+      title: 'Images',
       type: 'array',
       of: [{type: 'image'}],
       options: {
@@ -35,6 +35,11 @@ export default {
     {
       name: 'details',
       title: 'Details',
+      type: 'string',
+    },
+    {
+      title: 'Category',
+      name: 'category',
       type: 'string',
     },
   ],

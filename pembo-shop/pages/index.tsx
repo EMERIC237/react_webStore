@@ -1,3 +1,4 @@
+import console from 'console'
 import React from 'react'
 import { Product, FooterBanner, HeroBanner } from '../components'
 import { client } from '../lib/client'
@@ -26,9 +27,10 @@ const Home = ({ products, bannerData }: any) => {
 
 // we user getServerSideProps to get data from the server
 export const getServerSideProps = async () => {
-  const productQuery = '*[_type=="product"]';
+  const productQuery = "*[_type=='product']{'id':_id}";
   const bannerQuery = '*[_type=="banner"]';
   const products = await client.fetch(productQuery);
+  console.log({ products })
   const bannerData = await client.fetch(bannerQuery);
 
   return {

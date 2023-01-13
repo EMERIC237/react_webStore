@@ -1,42 +1,44 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { createTypeReferenceDirectiveResolutionCache, idText } from "typescript";
+import { CartProduct } from "../models/cartProduct.model";
+import { Product } from "../models/product.model";
+// Interface that defined the context used by the app
 interface AppContextInterface {
   showCart: boolean;
-  cartItems: any[] | undefined;
+  cartItems: CartProduct[] | undefined;
   totalPrice: number | undefined;
   totalQuantities: number | undefined;
   qty: number;
   setShowCart: React.Dispatch<React.SetStateAction<boolean>>,
   increaseQty: () => void;
   decreaseQty: () => void;
-  onAddItems: (product: any, quantity: number) => void;
+  onAddItems: (product: Product, quantity: number) => void;
   toggleCartItemQuantity: (id: number, value: string) => void;
   onRemove: (id: number) => void;
 }
 
 const Context = createContext<AppContextInterface | null>(null);
 
-export const StateContext = ({ children }: any) => {
+export const StateContext = ({ children }: { children: React.ReactNode }) => {
   const [showCart, setShowCart] = useState(false);
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartProduct[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [totalQuantities, setTotalQuantities] = useState<number>(0);
   const [qty, setQty] = useState(1);
 
-  let foundProduct: any;
+  let foundProduct: CartProduct | undefined;
   let index;
 
-  const onAddItems = (product: any, quantity: number) => {
-    const checkProductInCart = cartItems.some((item: any) => item._id === product._id)
+  const onAddItems = (product: Product, quantity: number) => {
+    const checkProductInCart = cartItems.some((item) => item.id === product.id)
     //if the product exist in the cart...
-    setTotalPrice((prevTotalPrice: number) => prevTotalPrice + product.price * quantity)
+    setTotalPrice((prevTotalPrice) => prevTotalPrice + product.price * quantity)
     setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + quantity)
 
     if (checkProductInCart) {
-      const updatedCartItems = cartItems.map((cartProduct: any) => {
+      const updatedCartItems = cartItems.map((cartProduct) => {
 
-        if (cartProduct._id === product._id) {
+        if (cartProduct.id === product.id) {
           return {
             ...cartProduct,
             quantity: cartProduct.quantity + quantity
@@ -47,35 +49,36 @@ export const StateContext = ({ children }: any) => {
       })
       setCartItems(updatedCartItems)
     } else {
-      product.quantity = quantity
-      setCartItems([...cartItems, { ...product }])
+      setCartItems([...cartItems, { ...product, quantity: quantity }])
     }
     toast.success(`${qty} ${product.name} added to the cart.`)
   }
 
   const onRemove = (id: number) => {
-    foundProduct = cartItems.find((item) => item._id === id)
-    const newCartItems = cartItems.filter((item) => item._id !== id)
-    setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price * foundProduct.quantity)
-    setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - foundProduct.quantity)
+    foundProduct = cartItems.find((item) => item.id === id)
+    const newCartItems = cartItems.filter((item) => item.id !== id)
+    // foundProduct showing possibling "undefined" even inside the "if" statement
+    if (foundProduct) {
+      setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct!.price * foundProduct!.quantity)
+      setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - foundProduct!.quantity)
+    }
     setCartItems(newCartItems)
   }
 
   const toggleCartItemQuantity = (id: number, value: string) => {
+    foundProduct = cartItems.find((item) => item.id === id)
+    index = cartItems.find((product) => product.id === id)
+    const newCartItems = cartItems.filter((item) => item.id !== id)
 
-    foundProduct = cartItems.find((item) => item._id === id)
-    index = cartItems.find((product) => product._id === id)
-    const newCartItems = cartItems.filter((item) => item._id !== id)
-
-    if (value === 'inc') {
+    if (value === 'inc' && foundProduct) {
       setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity + 1 }])
-      setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price)
+      setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct!.price)
       setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + 1)
 
-    } else if (value === 'dec') {
+    } else if (value === 'dec' && foundProduct) {
       if (foundProduct.quantity > 1) {
         setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity - 1 }])
-        setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price)
+        setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct!.price)
         setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - 1)
       }
     }
