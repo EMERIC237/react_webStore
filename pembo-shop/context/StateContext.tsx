@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { CartProduct } from "../models/cartProduct.model";
-import { Product } from "../models/product.model";
+import { ProductModel } from "../models/product.model";
 // Interface that defined the context used by the app
 interface AppContextInterface {
   showCart: boolean;
@@ -12,7 +12,7 @@ interface AppContextInterface {
   setShowCart: React.Dispatch<React.SetStateAction<boolean>>,
   increaseQty: () => void;
   decreaseQty: () => void;
-  onAddItems: (product: Product, quantity: number) => void;
+  onAddItems: (product: ProductModel, quantity: number) => void;
   toggleCartItemQuantity: (id: number, value: string) => void;
   onRemove: (id: number) => void;
 }
@@ -29,7 +29,7 @@ export const StateContext = ({ children }: { children: React.ReactNode }) => {
   let foundProduct: CartProduct | undefined;
   let index;
 
-  const onAddItems = (product: Product, quantity: number) => {
+  const onAddItems = (product: ProductModel, quantity: number) => {
     const checkProductInCart = cartItems.some((item) => item.id === product.id)
     //if the product exist in the cart...
     setTotalPrice((prevTotalPrice) => prevTotalPrice + product.price * quantity)

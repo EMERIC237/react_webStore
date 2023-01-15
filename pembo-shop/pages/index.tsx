@@ -1,10 +1,18 @@
-import console from 'console'
 import React from 'react'
 import { Product, FooterBanner, HeroBanner } from '../components'
 import { client } from '../lib/client'
+import { ProductModel } from '../models/product.model'
+import { bannerModel } from '../models/banner.model'
+import { GetServerSideProps } from 'next'
+type fetchedDataType = {
+  products: ProductModel[],
+  bannerData: bannerModel[]
+}
 
 
-const Home = ({ products, bannerData }: any) => {
+
+
+const Home = ({ products, bannerData }: fetchedDataType) => {
   return (
     <>
       <HeroBanner heroBanner={bannerData.length && bannerData[0]} />
@@ -16,8 +24,8 @@ const Home = ({ products, bannerData }: any) => {
       </div>
 
       <div className='products-container'>
-        {products?.map((product: any) =>
-          <Product key={product._id} product={product} />
+        {products?.map((product) =>
+          <Product key={product.id} product={product} />
         )}
       </div>
       <FooterBanner footerBanner={bannerData && bannerData[0]} />
@@ -26,13 +34,13 @@ const Home = ({ products, bannerData }: any) => {
 }
 
 // we user getServerSideProps to get data from the server
-export const getServerSideProps = async () => {
-  const productQuery = "*[_type=='product']{'id':_id}";
-  const bannerQuery = '*[_type=="banner"]';
-  const products = await client.fetch(productQuery);
-  console.log({ products })
-  const bannerData = await client.fetch(bannerQuery);
+export const getServerSideProps: GetServerSideProps<fetchedDataType> = async () => {
+  const productQuery = "*[_type == 'product'] {'id':_id,name,images,slug,price,details,category}";
+  const bannerQuery = "*[_type == 'banner'] {'id':_id,buttonText,desc,discount,image,largeText1,largeText2,midText,product,saleTime,smallText}";
 
+  const products = await client.fetch(productQuery);
+
+  const bannerData = await client.fetch(bannerQuery);
   return {
     props: { products, bannerData }
   }
