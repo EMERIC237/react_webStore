@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { client, urlFor } from '../../lib/client'
 import { GetStaticPaths } from 'next'
 import { AiOutlineMinus, AiOutlinePlus, AiFillStar, AiOutlineStar } from 'react-icons/ai'
@@ -25,13 +26,22 @@ const ProductDetails = ({ product, products }: slugDataProps) => {
             <div className="product-detail-container">
                 <div>
                     <div className="image-container">
-                        <img src={urlFor(images && images[index])} className="product-detail-image" />
+                        <Image
+                            src={urlFor(images && images[index]).url()}
+                            className="product-detail-image"
+                            alt={name}
+                            width={200}
+                            height={200}
+                        />
                     </div>
                     <div className="small-images-container">
                         {images?.map((item, i) => (
-                            <img
+                            <Image
                                 key={i}
-                                src={urlFor(item)}
+                                src={urlFor(item).url()}
+                                alt={name}
+                                width={100}
+                                height={100}
                                 className={i === index ? 'small-image selected-image' : 'small-image'}
                                 onMouseEnter={() => setIndex(i)}
                             />
@@ -113,9 +123,6 @@ export const getStaticProps: GetStaticProps<slugDataProps> = async ({ params: { 
 
     const product = await client.fetch(query);
     const products = await client.fetch(productsQuery);
-    console.log(product)
-    console.log(products)
-
     return {
         props: { products, product }
     }

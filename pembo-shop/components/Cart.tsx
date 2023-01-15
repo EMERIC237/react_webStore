@@ -1,10 +1,12 @@
 import React, { useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineLeft, AiOutlineShopping } from 'react-icons/ai'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { toast } from 'react-hot-toast'
 import { useStateContext } from '../context/StateContext'
 import { urlFor } from '../lib/client'
+
 const Cart = () => {
   const cartRef = useRef(null);
   const context = useStateContext();
@@ -36,7 +38,12 @@ const Cart = () => {
         <div className="product-container">
           {cartItems!.length >= 1 && cartItems!.map((item, index) => (
             <div className="product" key={item.id}>
-              <img src={urlFor(item?.images[0]).width(300).url()} className='cart-product-image' />
+              <Image
+                src={urlFor(item?.images[0]).width(300).url()}
+                alt={item.name}
+                className='cart-product-image'
+                width={100}
+                height={100} />
               <div className="item-desc">
                 <div className="flex top">
                   <h5>{item.name}</h5>
