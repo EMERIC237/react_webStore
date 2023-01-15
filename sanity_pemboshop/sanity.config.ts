@@ -9,6 +9,7 @@ export default defineConfig({
 
   projectId: '9m1hjh3n',
   dataset: 'production',
+  basePath: 'pemboShopStore',
 
   plugins: [deskTool(), visionTool()],
 
