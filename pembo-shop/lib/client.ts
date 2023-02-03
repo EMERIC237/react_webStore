@@ -1,15 +1,9 @@
-import sanityClient from "@sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
-import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import Client from "shopify-buy";
 
-export const client = sanityClient({
-  projectId: "9m1hjh3n",
-  dataset: "production",
-  apiVersion: "2022-12-17",
-  useCdn: true,
-  token: process.env.NEXT_PUBLIC_SANITY_TOKEN,
+export const shopifyClient = Client.buildClient({
+  storefrontAccessToken: process.env.SHOPIFY_STORE_FRONT_ACCESS_TOKEN!,
+  domain: process.env.SHOPIFY_STORE_DOMAIN!,
 });
 
-const builder = imageUrlBuilder(client);
-
-export const urlFor = (source: SanityImageSource) => builder.image(source);
+export const parseShopifyResponse = (response: any) =>
+  JSON.parse(JSON.stringify(response));

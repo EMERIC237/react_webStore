@@ -1,18 +1,19 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { client, urlFor } from '../../lib/client'
 import { GetStaticPaths } from 'next'
 import { AiOutlineMinus, AiOutlinePlus, AiFillStar, AiOutlineStar } from 'react-icons/ai'
 import { Product } from '../../components'
 import { useStateContext } from '../../context/StateContext'
 import { GetStaticProps } from 'next'
 import { ProductModel } from '../../models/product.model'
-type slugDataProps = {
+import { shopifyClient, parseShopifyResponse } from '../../lib/client'
+type handleDataProps = {
     products: ProductModel[],
     product: ProductModel
 }
 
-const ProductDetails = ({ product, products }: slugDataProps) => {
+const ProductDetails = ({ product, products }: handleDataProps) => {
+    // console.log('detail product: ', product)
     const { images, name, details, price } = product;
     const [index, setIndex] = useState(0)
     // check if the context is null
@@ -27,7 +28,7 @@ const ProductDetails = ({ product, products }: slugDataProps) => {
                 <div>
                     <div className="image-container">
                         <Image
-                            src={urlFor(images && images[index]).url()}
+                            src={(images && images[index]).src}
                             className="product-detail-image"
                             alt={name}
                             width={200}
@@ -38,7 +39,7 @@ const ProductDetails = ({ product, products }: slugDataProps) => {
                         {images?.map((item, i) => (
                             <Image
                                 key={i}
-                                src={urlFor(item).url()}
+                                src={(item).src}
                                 alt={name}
                                 width={100}
                                 height={100}
@@ -65,7 +66,7 @@ const ProductDetails = ({ product, products }: slugDataProps) => {
                     </div>
                     <h4>Details: </h4>
                     <p>{details}</p>
-                    <p className="price">${price}</p>
+                    <p className="price">${price.amount}</p>
                     <div className="quantity">
                         <h3>Quantity:</h3>
                         <p className="quantity-desc">
@@ -84,11 +85,11 @@ const ProductDetails = ({ product, products }: slugDataProps) => {
             <div className="maylike-products-wrapper">
                 <h2>You may also like</h2>
                 <div className="marquee">
-                    <div className="maylike-products-container track">
+                    {/* <div className="maylike-products-container track">
                         {products.map((item) => (
                             <Product key={item.id} product={item} />
                         ))}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
@@ -97,34 +98,34 @@ const ProductDetails = ({ product, products }: slugDataProps) => {
 
 export default ProductDetails
 
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-    const query = `*[_type == "product"]{
-        slug{
-            current
-        }
-    }
-    `;
-    const products = await client.fetch(query);
+export const getStaticPaths: GetStaticPaths<{ handle: string }> = async () => {
+    const products = await shopifyClient.product.fetchAll()
     const paths = products.map((product: any) => ({
         params: {
-            slug: product.slug.current
+            handle: product.handle
         }
     }))
-
     return {
         paths, //indicates that no page needs be created at build time
         fallback: 'blocking' //indicates the type of fallback
     }
 }
 
-export const getStaticProps: GetStaticProps<slugDataProps> = async ({ params: { slug } }: any) => {
-    const query = `*[_type == "product" && slug.current == '${slug}'][0] {'id':_id,name,images,slug,price,details,category}`;
-    const productsQuery = `*[_type == "product"] {'id':_id,name,images,slug,price,details,category}`
+export const getStaticProps = async ({ params: { handle } }: any) => {
+    // Fetch one product
+    const fetchedProduct = await shopifyClient.product.fetchByHandle(handle)
 
-    const product = await client.fetch(query);
-    const products = await client.fetch(productsQuery);
+    const parsedProduct = parseShopifyResponse(fetchedProduct)
+    // console.log('test here', fetchedProduct.attrs)
+    const product = {
+        id: parsedProduct.id,
+        images: parsedProduct.images,
+        name: parsedProduct.title,
+        price: parsedProduct.variants[0].price,
+        details: parsedProduct.description,
+    }
     return {
-        props: { products, product }
+        props: { product }
     }
 }
 

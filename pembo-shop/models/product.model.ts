@@ -1,11 +1,14 @@
-import { SanityImageObject } from "@sanity/image-url/lib/types/types";
 // SanityImageSource
 export interface ProductModel {
   id: number;
-  images: SanityImageObject[];
+  images: any[];
   name: string;
-  slug: { _type: string; current: string };
-  price: number;
+  handle: string;
+  price: {
+    amount: string;
+    currencyCode: string;
+    [key: string]: any;
+  };
   details: string;
   category: string;
 }

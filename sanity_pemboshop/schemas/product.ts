@@ -19,9 +19,9 @@ export default {
       type: 'string',
     },
     {
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
+      name: 'handle',
+      title: 'handle',
+      type: 'handle',
       options: {
         source: 'name',
         maxLength: 90,
