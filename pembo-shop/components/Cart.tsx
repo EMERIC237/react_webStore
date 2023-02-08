@@ -5,7 +5,7 @@ import { AiOutlineMinus, AiOutlinePlus, AiOutlineLeft, AiOutlineShopping } from 
 import { TiDeleteOutline } from 'react-icons/ti'
 import { toast } from 'react-hot-toast'
 import { useStateContext } from '../context/StateContext'
-import { urlFor } from '../lib/client'
+
 
 const Cart = () => {
   const cartRef = useRef(null);
@@ -39,7 +39,7 @@ const Cart = () => {
           {cartItems!.length >= 1 && cartItems!.map((item, index) => (
             <div className="product" key={item.id}>
               <Image
-                src={urlFor(item?.images[0]).width(300).url()}
+                src={item.images[0].src}
                 alt={item.name}
                 className='cart-product-image'
                 width={100}
@@ -47,7 +47,7 @@ const Cart = () => {
               <div className="item-desc">
                 <div className="flex top">
                   <h5>{item.name}</h5>
-                  <h4>XAF {item.price}</h4>
+                  <h4>XAF {item.price.amount}</h4>
                 </div>
                 <div className="flex bottom">
                   <div>

@@ -32,7 +32,7 @@ export const StateContext = ({ children }: { children: React.ReactNode }) => {
   const onAddItems = (product: ProductModel, quantity: number) => {
     const checkProductInCart = cartItems.some((item) => item.id === product.id)
     //if the product exist in the cart...
-    setTotalPrice((prevTotalPrice) => prevTotalPrice + product.price * quantity)
+    setTotalPrice((prevTotalPrice) => prevTotalPrice + Number(product.price.amount) * quantity)
     setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + quantity)
 
     if (checkProductInCart) {
@@ -59,7 +59,7 @@ export const StateContext = ({ children }: { children: React.ReactNode }) => {
     const newCartItems = cartItems.filter((item) => item.id !== id)
     // foundProduct showing possibling "undefined" even inside the "if" statement
     if (foundProduct) {
-      setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct!.price * foundProduct!.quantity)
+      setTotalPrice((prevTotalPrice) => prevTotalPrice - Number(foundProduct!.price) * foundProduct!.quantity)
       setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - foundProduct!.quantity)
     }
     setCartItems(newCartItems)
@@ -72,13 +72,13 @@ export const StateContext = ({ children }: { children: React.ReactNode }) => {
 
     if (value === 'inc' && foundProduct) {
       setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity + 1 }])
-      setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct!.price)
+      setTotalPrice((prevTotalPrice) => prevTotalPrice + Number(foundProduct!.price))
       setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + 1)
 
     } else if (value === 'dec' && foundProduct) {
       if (foundProduct.quantity > 1) {
         setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity - 1 }])
-        setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct!.price)
+        setTotalPrice((prevTotalPrice) => prevTotalPrice - Number(foundProduct!.price))
         setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - 1)
       }
     }
