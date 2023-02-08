@@ -1,5 +1,7 @@
 .history
+.history/*
 *.history
 */.history
+.env.local
 .env
 .vercel
