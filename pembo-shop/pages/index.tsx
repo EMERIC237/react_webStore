@@ -43,10 +43,11 @@ const Home = ({ products, bannerData }: fetchedDataType) => {
 export const getServerSideProps: GetServerSideProps = async () => {
   //Fetch all the products
   const products: ProductModel[] = []
-  const fetchedProducts = await shopifyClient.product.fetchAll()
+  const fetchedProducts = await shopifyClient.product.fetchAll(200)
 
+  console.log("Number of fetched products", fetchedProducts.length)
   fetchedProducts.forEach((fetchedProduct: any) => {
-    console.log({fetchedProduct})
+  
     // fetchedProduct.variants.forEach((t:any)=>{
     //   console.log(t.image.src)
     // })
